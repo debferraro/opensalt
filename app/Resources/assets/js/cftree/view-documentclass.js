@@ -1256,6 +1256,10 @@ function apxDocument(initializer) {
 
     /** Show the currentItem on the right side */
     self.showCurrentItem = function() {
+        var md = window.markdownit({
+            breaks: true,
+            linkify: true
+        });
         // clear apx.unknownAssocsShowing
         apx.unknownAssocsShowing = {};
     
@@ -1334,7 +1338,7 @@ function apxDocument(initializer) {
         // else it's an lsItem
         } else {
             // show title and appropriate icon
-            $jq.find(".itemTitleSpan").html(self.getItemTitle(item));
+            $jq.find(".itemTitleSpan").html(md.renderInline(self.getItemTitle(item)));
             if (item.setToParent === true || (!empty(item.ftNodeData) && item.ftNodeData.children.length > 0)) {
                 $jq.find(".itemTitleIcon").attr("src", "/assets/img/folder.png");
             } else {
@@ -1356,7 +1360,7 @@ function apxDocument(initializer) {
                     // TODO: deal with ck, el, itp
                     html += '<li class="list-group-item">'
                         + '<strong>' + attributes[key] + ':</strong> '
-                        + val
+                        + md.renderInline(val)
                         + '</li>'
                         ;
                 }
@@ -1377,11 +1381,10 @@ function apxDocument(initializer) {
                     // for uri, get it from the apxDocument
                     if (key == "uri") {
                         val = self.getItemUri(item);
-                        val = '<a href="' + val + '" target="_blank">' + val + '</a>';
                     }
                     html += '<li class="list-group-item lsItemDetailsExtras">'
                         + '<strong>' + attributes[key] + ':</strong> '
-                        + val
+                        + md.renderInline(val)
                         + '</li>'
                         ;
                 }
@@ -1477,7 +1480,7 @@ function apxDocument(initializer) {
                     html += '<a data-association-id="' + a.id + '" data-association-identifier="' + a.identifier + '" data-association-item="dest" class="list-group-item lsassociation lsitem clearfix lsassociation-' + originDoc + '-doc">'
                         + removeBtn
                         + '<span class="itemDetailsAssociationTitle">'
-                        + self.associationDestItemTitle(a)
+                        + md.renderInline(self.associationDestItemTitle(a))
                         + '</span>'
                         + '</a>'
                         ;
