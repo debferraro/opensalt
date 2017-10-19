@@ -4,6 +4,14 @@ window.apx = window.apx||{};
 /* global empty */
 /* global op */
 
+var
+    mk = require('markdown-it-katex'),
+    md = require('markdown-it')({
+        breaks: true,
+        linkify: true
+    }).use(mk, {"throwOnError": false, "errorColor": " #cc0000"})
+;
+
 ///////////////////////////////////////////////////////////////////////////////
 apx.allDocs = {};
 apx.allItemsHash = {};
@@ -732,7 +740,8 @@ function apxDocument(initializer) {
     
             // add humanCodingScheme to the start if we have one
             if (!empty(item.hcs)) {
-                title = '<span class="item-humanCodingScheme">' + item.hcs + '</span> ' + title;
+                //title = '<span class="item-humanCodingScheme">' + item.hcs + '</span> ' + title;
+                title = '**' + item.hcs + '** ' + title;
             }
         }
             
@@ -861,7 +870,7 @@ function apxDocument(initializer) {
             if (empty(node.data.ref)) {
                 content = "Item: " + node.title;    // this shouldn't happen
             } else {
-                content = self.getItemTitle(node.data.ref, true);
+                content = md.renderInline(self.getItemTitle(node.data.ref, true));
             }
         }
 
@@ -1256,10 +1265,6 @@ function apxDocument(initializer) {
 
     /** Show the currentItem on the right side */
     self.showCurrentItem = function() {
-        var md = window.markdownit({
-            breaks: true,
-            linkify: true
-        });
         // clear apx.unknownAssocsShowing
         apx.unknownAssocsShowing = {};
     
@@ -1276,7 +1281,7 @@ function apxDocument(initializer) {
             if (!empty(item.version)) {
                 title = '<span style="float:right" class="lessImportant">Version ' + item.version + '</span>' + title;
             }
-            $jq.find(".itemTitleSpan").html(title);
+            $jq.find(".itemTitleSpan").html(md.renderInline(title));
             $jq.find(".itemTitleIcon").attr("src", "/assets/img/doc.png");
 
             /////////////////////////////////////
@@ -1442,7 +1447,7 @@ function apxDocument(initializer) {
                             icon = '<img class="association-panel-icon" src="/assets/img/association-icon.png">';
                         }
                         html += '<section class="panel panel-default panel-component item-component">'
-                            + '<div class="panel-heading">' + icon + title + '</div>'
+                            + '<div class="panel-heading">' + icon + md.renderInline(title) + '</div>'
                             + '<div class="panel-body"><div><div class="list-group">'
                             ;
                             

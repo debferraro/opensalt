@@ -246,6 +246,14 @@ apx.treeDocLoadCallback1 = function() {
                 mode: "hide"  // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
             },
 
+            /*
+            renderTitle: function(event, data) {
+                console.log(event, data);
+                title = md.renderInline(apx.treeDoc1.getItemTitle(data.node.data.ref, true));
+                return title;
+            },
+            */
+
             // function called after the node is rendered
             renderNode: function(event, data) {
                 apx.treeDoc1.initializeTooltip(data.node);

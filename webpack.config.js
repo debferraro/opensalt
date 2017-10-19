@@ -5,14 +5,31 @@ var vendorDir = './vendor';
 var bowerDir = './vendor/bower-asset';
 var npmDir = './vendor/npm-asset';
 var assetsDir = './app/Resources/assets';
+var buildDir = './web/build';
 
 var sharedScripts = [
     bowerDir+'/html5-boilerplate/dist/js/plugins.js',
     bowerDir+'/jquery/dist/jquery.js',
     bowerDir+'/jquery-ui/jquery-ui.js',
     bowerDir+'/bootstrap-sass/assets/javascripts/bootstrap.js',
-    bowerDir+'/fancytree/dist/jquery.fancytree-all.js'
+    bowerDir+'/fancytree/dist/jquery.fancytree-all.js',
+    assetsDir+'/js/site.js'
 ];
+
+var apxScripts = [
+    assetsDir+'/js/cftree/view-documentclass.js',
+    assetsDir+'/js/cftree/view-trees.js',
+    assetsDir+'/js/cftree/view-edit.js',
+    assetsDir+'/js/cftree/view-modes.js',
+    assetsDir+'/js/cftree/viewx.js',
+    assetsDir+'/js/cftree/apxglobal.js'
+];
+
+var concat = require('concat-files');
+concat(apxScripts, assetsDir+'/js/apx.js', function(err) {
+    if (err) throw err;
+    console.log('concat apx.js done');
+});
 
 var mainScripts = [
     bowerDir+'/datatables.net/js/jquery.dataTables.js',
@@ -27,11 +44,7 @@ var mainScripts = [
     bowerDir+'/twbs-pagination/jquery.twbsPagination.js',
     assetsDir+'/js/application.js',
     assetsDir+'/js/lsdoc/index.js',
-    assetsDir+'/js/cftree/view-documentclass.js',
-    assetsDir+'/js/cftree/view-trees.js',
-    assetsDir+'/js/cftree/view-edit.js',
-    assetsDir+'/js/cftree/view-modes.js',
-    assetsDir+'/js/cftree/viewx.js'
+    assetsDir+'/js/apx.js'
 ];
 
 Encore
@@ -64,7 +77,11 @@ Encore
     })
     */
 
-    .autoProvidejQuery()
+    .autoProvideVariables({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery'
+    })
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning()
     .configureBabel(function(babelConfig) {
