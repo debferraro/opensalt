@@ -6,7 +6,7 @@ window.apx = window.apx||{};
 
 var
     mk = require('markdown-it-katex'),
-    md = require('markdown-it')({
+    md = require('markdown-it')('default', {
         breaks: true,
         linkify: true
     }).use(mk, {"throwOnError": false, "errorColor": " #cc0000"})
@@ -739,8 +739,7 @@ function apxDocument(initializer) {
 
             // add humanCodingScheme to the start if we have one
             if (!empty(item.hcs)) {
-                //title = '<span class="item-humanCodingScheme">' + item.hcs + '</span> ' + title;
-                title = '**' + item.hcs + '** ' + title;
+                title = '<span class="item-humanCodingScheme">' + md.renderInline(item.hcs) + '</span> ' + md.renderInline(title);
             }
         }
 
@@ -869,7 +868,7 @@ function apxDocument(initializer) {
             if (empty(node.data.ref)) {
                 content = "Item: " + node.title;    // this shouldn't happen
             } else {
-                content = md.renderInline(self.getItemTitle(node.data.ref, true));
+                content = self.getItemTitle(node.data.ref, true);
             }
         }
 
@@ -878,7 +877,7 @@ function apxDocument(initializer) {
             // "content": content,  // this is for popover
             "title": content,   // this is for tooltip
             "delay": { "show": 200, "hide": 100 },
-            "placement": "bottom",
+            "placement": "top",
             "html": true,
             "container": "body"
             // "trigger": "hover"   // this is for popover
@@ -1276,11 +1275,11 @@ function apxDocument(initializer) {
         // if this is a document node...
         if (item.nodeType == "document") {
             // show title and appropriate icon
-            var title = item.title;
+            var title = md.renderInline(item.title);
             if (!empty(item.version)) {
-                title = '<span style="float:right" class="lessImportant">Version ' + item.version + '</span>' + title;
+                title = '<span style="float:right" class="lessImportant">Version ' + md.renderInline(item.version) + '</span>' + title;
             }
-            $jq.find(".itemTitleSpan").html(md.renderInline(title));
+            $jq.find(".itemTitleSpan").html(title);
             $jq.find(".itemTitleIcon").attr("src", "/assets/img/doc.png");
 
             /////////////////////////////////////
@@ -1342,7 +1341,7 @@ function apxDocument(initializer) {
         // else it's an lsItem
         } else {
             // show title and appropriate icon
-            $jq.find(".itemTitleSpan").html(md.renderInline(self.getItemTitle(item)));
+            $jq.find(".itemTitleSpan").html(self.getItemTitle(item));
             if (item.setToParent === true || (!empty(item.ftNodeData) && item.ftNodeData.children.length > 0)) {
                 $jq.find(".itemTitleIcon").attr("src", "/assets/img/folder.png");
             } else {
@@ -1446,7 +1445,7 @@ function apxDocument(initializer) {
                             icon = '<img class="association-panel-icon" src="/assets/img/association-icon.png">';
                         }
                         html += '<section class="panel panel-default panel-component item-component">'
-                            + '<div class="panel-heading">' + icon + md.renderInline(title) + '</div>'
+                            + '<div class="panel-heading">' + icon + title + '</div>'
                             + '<div class="panel-body"><div><div class="list-group">'
                             ;
 
@@ -1484,7 +1483,7 @@ function apxDocument(initializer) {
                     html += '<a data-association-id="' + a.id + '" data-association-identifier="' + a.identifier + '" data-association-item="dest" class="list-group-item lsassociation lsitem clearfix lsassociation-' + originDoc + '-doc">'
                         + removeBtn
                         + '<span class="itemDetailsAssociationTitle">'
-                        + md.renderInline(self.associationDestItemTitle(a))
+                        + self.associationDestItemTitle(a)
                         + '</span>'
                         + '</a>'
                         ;
