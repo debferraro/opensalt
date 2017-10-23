@@ -9,6 +9,10 @@ var
     md = require('markdown-it')('default', {
         breaks: true,
         linkify: true
+    }).use(mk, {"throwOnError": false, "errorColor": " #cc0000"}),
+    mdInline = require('markdown-it')('default', {
+        breaks: false,
+        linkify: true
     }).use(mk, {"throwOnError": false, "errorColor": " #cc0000"})
 ;
 
@@ -757,7 +761,7 @@ function apxDocument(initializer) {
     self.getItemTitle = function(item, requireFullStatement) {
         var title = self.getItemStatement(item, requireFullStatement);
 
-        title = md.renderInline(title);
+        title = mdInline.renderInline(title);
 
         if (item !== self.doc) {
             // add humanCodingScheme to the start if we have one
@@ -1384,7 +1388,7 @@ function apxDocument(initializer) {
         // else it's an lsItem
         } else {
             // show title and appropriate icon
-            $jq.find(".itemTitleSpan").html(self.getItemTitleBlock(item));
+            $jq.find(".itemTitleSpan").html(self.getItemTitle(item));
             if (item.setToParent === true || (!empty(item.ftNodeData) && item.ftNodeData.children.length > 0)) {
                 $jq.find(".itemTitleIcon").attr("src", "/assets/img/folder.png");
             } else {
@@ -1437,7 +1441,7 @@ function apxDocument(initializer) {
                         val = self.getItemUri(item);
                         html += '<li class="list-group-item lsItemDetailsExtras">'
                             + '<strong>' + attributes[key] + ':</strong> '
-                            + md.renderInline(val)
+                            + mdInline.renderInline(val)
                             + '</li>'
                         ;
                     } else {
